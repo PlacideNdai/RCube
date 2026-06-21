@@ -96,11 +96,6 @@ function animate(time) {
     // renderer.setAnimationLoop(animate);
     requestAnimationFrame(animate);
 
-    // cubesArray.forEach((cube) => {
-    //     cube.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.01);
-    //     cube.rotation.y += 0.01;
-    // })
-
     controls.update();
     renderer.render(scene, camera);
 }
