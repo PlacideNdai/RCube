@@ -1,5 +1,8 @@
 import * as THREE from "three";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
+// --------------------- Colors ------------------------
+// -----------------------------------------------------
 const colors = {
     orange: 0xffa500,
     red: 0xff0000,
@@ -9,23 +12,33 @@ const colors = {
     purple: 0x800080,
     black: 0x000000,
 }
-// creating a scene.
+
+// ------------------------ Scene, camera, and rendering ----------------//
+// -----------------------------------------------------------------
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(
     75,
     window.innerWidth / window.innerHeight, 0.1, 1000
 );
-
-// rendering the scene.
 const renderer = new THREE.WebGLRenderer();
+
 renderer.setSize(window.innerWidth, window.innerHeight);
 document.body.appendChild(renderer.domElement);
 
 
-// colors and ambient lighting.
+// --------------------- Initial controls (camera) --------------------- //.
+// -----------------------------------------------------------------
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.enableDamping = true;
+controls.dampingFactor = 0.05;
+
+
+// --------------------- lighting --------------------------------- //.
+// -----------------------------------------------------------------
 const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-scene.add(ambientLight);
 const directionalLight = new THREE.DirectionalLight(0xffffff, 0.9);
+
+scene.add(ambientLight);
 directionalLight.position.set(1, 1, 1);
 scene.add(directionalLight);
 
@@ -35,32 +48,22 @@ const geome = new THREE.BoxGeometry(1, 1, 1);
 /**
  * 1. create a 3 x 3 x 3 cube.
  * 2. Assign a color to each side of the cube.
+ * 3. initial controls (camera)
  *  **/
 
 
-// ---------------------- ideas tryouts ---------------
+// ---------------------- ideas tryouts below, goals above ---------------
+// ------------------------------------------------------------------------
 
-
-// const cube = new THREE.Mesh(geome, materials);
 const cubesArray = [];
 
-// selecting a random color from the color array to apply to a cube.
-function ChooseRandomColor() {
-    return colors[Math.floor(Math.random() * colors.length)];
-}
-
+// ------------------------- Cube Building -------------------------------
+// ------------------------------------------------------------------------
 for (let a = -1; a < 2; a++) {
     for (let b = -1; b < 2; b++) {
         for (let c = -1; c < 2; c++) {
 
-            // choosing materials.
-            const materials = new THREE.MeshStandardMaterial({
-                // color: 0x00ff00
-                color: ChooseRandomColor(),
-                roughness:10,
-                metalness:0.1
-            });
-
+            // color assignment based on the generating side in the three D array.
             const cubeMaterials = [
                 new THREE.MeshStandardMaterial({ color: a === 1 ? colors.blue : colors.black }), // Right
                 new THREE.MeshStandardMaterial({ color: a === -1 ? colors.green : colors.black }), // Left
@@ -93,12 +96,12 @@ function animate(time) {
     // renderer.setAnimationLoop(animate);
     requestAnimationFrame(animate);
 
-    cubesArray.forEach((cube) => {
-        cube.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.01);
-        cube.rotation.y += 0.01;
-    })
+    // cubesArray.forEach((cube) => {
+    //     cube.position.applyAxisAngle(new THREE.Vector3(0, 1, 0), 0.01);
+    //     cube.rotation.y += 0.01;
+    // })
 
-
+    controls.update();
     renderer.render(scene, camera);
 }
 
