@@ -4,9 +4,9 @@
   "description": "After purchasing and learning a little more about Rubiks Cubes, I thought about learning more about it by computerizing it. As of current, I can only solve up to the second layer.",
   "main": "script.js",
   "scripts": {
-    "start": "node script.js",
-    "dev": "nodemon script.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
   },
   "repository": {
     "type": "git",
@@ -21,5 +21,8 @@
   "homepage": "https://github.com/PlacideNdai/RCube#readme",
   "dependencies": {
     "three": "^0.184.0"
+  },
+  "devDependencies": {
+    "vite": "^8.0.16"
   }
 }
