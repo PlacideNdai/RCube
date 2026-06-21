@@ -1,0 +1,25 @@
+{
+  "name": "rcube",
+  "version": "1.0.0",
+  "description": "After purchasing and learning a little more about Rubiks Cubes, I thought about learning more about it by computerizing it. As of current, I can only solve up to the second layer.",
+  "main": "script.js",
+  "scripts": {
+    "start": "node script.js",
+    "dev": "nodemon script.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PlacideNdai/RCube.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PlacideNdai/RCube/issues"
+  },
+  "homepage": "https://github.com/PlacideNdai/RCube#readme",
+  "dependencies": {
+    "three": "^0.184.0"
+  }
+}
