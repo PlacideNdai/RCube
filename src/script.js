@@ -9,7 +9,7 @@ const colors = {
     yellow: 0xffff00,
     green: 0x00ff00,
     blue: 0x0000ff,
-    purple: 0x800080,
+    white: 0xffffff,
     black: 0x000000,
 }
 
@@ -50,6 +50,7 @@ const geome = new THREE.BoxGeometry(1, 1, 1);
  * 2. Assign a color to each side of the cube.
  * 3. initial controls (camera)
  * 4. rotation.
+ * 5. Rotation animations
  *  **/
 
 
@@ -89,36 +90,32 @@ for (let a = -1; a < 2; a++) {
 camera.position.set(4, 4, 6);
 camera.lookAt(0, 0, 0);
 
-// ---------------------- Cube rotation -------------------------------
+// ---------------------- Animations setup -------------------------------
 // ------------------------------------------------------------------------
-// function rotateTopLayer() {
-//     const tempGroup = new THREE.Group();
-//     scene.add(tempGroup);
+const animationState = {
+    active: false,
+    group: null,
+    axis: null,
+    currentProgress: 0,
+    targetAngle: 0,
+    speed: 0.1
+};
 
-//     const topcubies = cubesArray.filter(cube => cube.position.y > 0.5);
-
-//     topcubies.forEach(cube => {
-//         tempGroup.add(cube);
-//     })
-
-//     tempGroup.rotation.y += Math.PI / 2;
-
-//     while (tempGroup.children.length > 0) {
-//         const cube = tempGroup.children[0];
-//         scene.attach(cube);
-//     }
-
-//     scene.remove(tempGroup);
-// }
 
 // ---------------------- Rotate Function -------------------------------
 // ------------------------------------------------------------------------
 /***
  * @param {String} axis - axis of rotation (x, y, z)
  * @param {Number} layerValue - The target coordiation (-1, 0, 1)
- * @param (Boolean) clockwise - true for clockwise, false for anticlockwise
+ * @param {Boolean} clockwise - true for clockwise, false for anticlockwise
  * **/
 function rotateLayer(axis, layerValue, clockwise = true){
+
+    // if animations are active, ignore the key inputs.
+    if(animationState.active) return;
+
+
+
     const tempGroup = new THREE.Group();
     scene.add(tempGroup);
 
@@ -133,15 +130,12 @@ function rotateLayer(axis, layerValue, clockwise = true){
         tempGroup.add(cube);
     })
 
-    const angle = clockwise ? Math.PI /2 : -Math.PI / 2;
-    tempGroup.rotation[axis] += angle;
 
-    while(tempGroup.children.length > 0){
-        const cube = tempGroup.children[0];
-        scene.attach(cube);
-    }
-
-    scene.remove(tempGroup);
+    animationState.active = true;
+    animationState.group = tempGroup;
+    animationState.axis = axis;
+    animationState.currentProgress = 0;
+    animationState.targetAngle = clockwise ? Math.PI /2 : -Math.PI / 2;
 }
 
 
@@ -154,7 +148,7 @@ window.addEventListener("keydown", (e) => {
             rotateLayer("y", 1, true);
             break;
         case "g":
-            rotateLayer("y", 1, false);
+            rotateLayer("y", -1, false);
             break;
 
         case "r":
@@ -172,15 +166,37 @@ window.addEventListener("keydown", (e) => {
     }
 });
 
-// render the test and anumate it.
-function animate(time) {
-
-    // renderer.setAnimationLoop(animate);
+// render the test and animate it.
+function animate() {
     requestAnimationFrame(animate);
 
     controls.update();
+
+
+
+    if(animationState.active){
+        const state = animationState;
+
+        const step = state.targetAngle > 0? state.speed : -state.speed;
+        state.group.rotation[state.axis] += step;
+        state.currentProgress += step;
+
+        if(Math.abs(state.currentProgress) >= Math.abs(state.targetAngle)){
+            state.group.rotation[state.axis] = state.targetAngle;
+
+            while(state.group.children.length > 0){
+                const cube  = state.group.children[0];
+                scene.attach(cube);
+            }
+
+            scene.remove(state.group);
+
+            animationState.active = false;
+            animationState.group = null;
+            animationState.axis = null;
+        }
+    }
     renderer.render(scene, camera);
 }
-
 
 animate();
